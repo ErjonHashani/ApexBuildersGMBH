@@ -4,8 +4,9 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
   env:{
-    MONGODB_URI: "mongodb+srv://dev-api:2cIRcqf0nj5gMgOv@myapplication.qoosxqy.mongodb.net/myapp?retryWrites=true&w=majority"
-
+    MONGODB_URI: "mongodb+srv://dev-api:2cIRcqf0nj5gMgOv@myapplication.qoosxqy.mongodb.net/myapp?retryWrites=true&w=majority",
+    NEXTAUTH_SECRET: "your-strong-secret-key-here", // Add this
+    NEXTAUTH_URL: "http://localhost:3000" // Add this for development
   }
 };
 

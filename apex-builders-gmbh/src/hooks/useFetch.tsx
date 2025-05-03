@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// hooks/useFetch.tsx
 import { useState, useEffect } from "react";
 
 type FetchResponse<T> = {
@@ -17,6 +18,8 @@ function useFetch<T>(
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const abortController = new AbortController();
+
     const fetchData = async () => {
       try {
         const options: RequestInit = {
@@ -24,24 +27,29 @@ function useFetch<T>(
           headers: {
             "Content-Type": "application/json",
           },
-          body: body ? JSON.stringify(body) : null, // Only attach body for POST/PUT requests
+          body: body ? JSON.stringify(body) : null,
+          signal: abortController.signal,
         };
 
         const response = await fetch(url, options);
         if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const result = await response.json();
         setData(result);
       } catch (err: any) {
-        setError(err.message);
+        if (err.name !== "AbortError") {
+          setError(err.message);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
+
+    return () => abortController.abort();
   }, [url, method, body]);
 
   return { data, error, loading };

@@ -3,6 +3,7 @@
     "baseUrl": "src",
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     "paths": {
       "@/components/*": ["components/*"],
       "@/assets/*": ["assets/*"],
