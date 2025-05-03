@@ -1,23 +1,26 @@
+/* eslint-disable no-var */
+import { MongoClient } from "mongodb";
+
+// Create a global variable to avoid multiple database connections
 declare global {
-  // eslint-disable-next-line no-var
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-import { MongoClient } from "mongodb";
+const uri = process.env.MONGODB_URI as string; // Use the env variable
 
-const uri = process.env.MONGODB_URI as string;
 const client = new MongoClient(uri);
 
 let clientPromise: Promise<MongoClient>;
 
+// Check if we're running in a development environment to use the global variable
 if (process.env.NODE_ENV === "development") {
-  // In development mode, use a global variable so the MongoClient is not constantly re-created
+  // In development mode, use a global variable to persist the client connection
   if (!global._mongoClientPromise) {
     global._mongoClientPromise = client.connect();
   }
   clientPromise = global._mongoClientPromise;
 } else {
-  // In production mode, it's safe to not use a global variable
+  // In production mode, use a direct connection
   clientPromise = client.connect();
 }
 
