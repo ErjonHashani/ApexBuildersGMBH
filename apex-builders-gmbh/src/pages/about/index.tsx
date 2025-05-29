@@ -74,7 +74,7 @@ export default function About() {
                     />
                   </svg>
                 </span>
-                <span className="text-gray-700">Founded in 2005</span>
+                <span className="text-gray-600">Founded in 2005</span>
               </li>
               <li className="flex items-start">
                 <span className="bg-blue-100 text-blue-600 p-2 rounded-full mr-3">
