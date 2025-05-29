@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { FaHardHat } from "react-icons/fa";
+import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 
@@ -19,7 +19,13 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2 group">
-          <FaHardHat className="text-blue-600 text-2xl group-hover:rotate-12 transition-transform duration-300" />
+          <Image
+            src="/favicon-32x32.png"
+            alt="Logo"
+            width={32}
+            height={32}
+            className="text-blue-600 text-2xl group-hover:rotate-12 transition-transform duration-300"
+          />
           <span className="text-xl font-bold text-gray-800 group-hover:text-blue-600 transition">
             Apex Builders GmbH
           </span>
