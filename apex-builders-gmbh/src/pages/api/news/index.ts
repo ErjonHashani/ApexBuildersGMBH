@@ -1,35 +1,28 @@
-// pages/api/news.ts
+// pages/api/news/index.ts
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getNews, createNews } from "@/api/services/News";
+import { News } from "@/api/models/News";
 
-type News = {
-  _id: string;
-  title: string;
-  body: string;
-  createdAt: Date;
-};
-
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<News[]>
+  res: NextApiResponse
 ) {
-  // Mock data that matches your News type
-  const mockNews: News[] = [
-    {
-      _id: "1",
-      title: "Breaking News",
-      body: "This is important breaking news content.",
-      createdAt: new Date(),
-    },
-    {
-      _id: "2",
-      title: "Technology Update",
-      body: "Latest developments in technology sector.",
-      createdAt: new Date(Date.now() - 86400000), // Yesterday
-    },
-  ];
-
-  // Simulate network delay
-  setTimeout(() => {
-    res.status(200).json(mockNews);
-  }, 500);
+  try {
+    if (req.method === "GET") {
+      const news = await getNews();
+      res.status(200).json(news);
+    } else if (req.method === "POST") {
+      const newNews: Omit<News, "_id"> = {
+        ...req.body,
+        createdAt: new Date(),
+      };
+      const result = await createNews(newNews as News);
+      res.status(201).json(result);
+    } else {
+      res.setHeader("Allow", ["GET", "POST"]);
+      res.status(405).end(`Method ${req.method} Not Allowed`);
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Server error", details: err });
+  }
 }

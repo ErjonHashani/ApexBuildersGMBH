@@ -7,7 +7,6 @@ import {
   useEffect,
 } from "react";
 import { News, NewNewsItem } from "@/api/models/News";
-import useFetch from "hooks/useFetch";
 
 interface NewsContextType {
   news: News[];
@@ -23,46 +22,67 @@ const NewsContext = createContext<NewsContextType | undefined>(undefined);
 
 export const NewsProvider = ({ children }: { children: ReactNode }) => {
   const [news, setNews] = useState<News[]>([]);
-  const { data, loading, error } = useFetch<News[]>("/api/news");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (data) {
-      setNews(data);
-    }
-  }, [data]);
-
-  const addNews = (newsItem: NewNewsItem) => {
-    const newItem: News = {
-      ...newsItem,
-      _id: Date.now().toString(), // Generate ID
-      createdAt: new Date(), // Set current date
+    const fetchNews = async () => {
+      try {
+        const res = await fetch("/api/news");
+        const data = await res.json();
+        setNews(data);
+      } catch (err) {
+        setError(`Failed to load news --> ${err}`);
+      } finally {
+        setLoading(false);
+      }
     };
-    setNews((prevNews) => [...prevNews, newItem]);
+    fetchNews();
+  }, []);
+
+  const addNews = async (newsItem: NewNewsItem) => {
+    try {
+      const res = await fetch("/api/news", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newsItem),
+      });
+      const newItem = await res.json();
+      setNews((prev) => [...prev, newItem]);
+    } catch (err) {
+      console.error("Failed to add news", err);
+    }
   };
 
-  const updateNews = (id: string, updatedData: Partial<News>) => {
-    setNews((prevNews) =>
-      prevNews.map((item) =>
-        item._id === id ? { ...item, ...updatedData } : item
-      )
-    );
+  const updateNews = async (id: string, updatedData: Partial<News>) => {
+    try {
+      await fetch(`/api/news/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
+      });
+      setNews((prev) =>
+        prev.map((item) =>
+          item._id === id ? { ...item, ...updatedData } : item
+        )
+      );
+    } catch (err) {
+      console.error("Failed to update news", err);
+    }
   };
 
-  const deleteNews = (id: string) => {
-    setNews((prevNews) => prevNews.filter((item) => item._id !== id));
+  const deleteNews = async (id: string) => {
+    try {
+      await fetch(`/api/news/${id}`, { method: "DELETE" });
+      setNews((prev) => prev.filter((item) => item._id !== id));
+    } catch (err) {
+      console.error("Failed to delete news", err);
+    }
   };
 
   return (
     <NewsContext.Provider
-      value={{
-        news,
-        setNews,
-        addNews,
-        updateNews,
-        deleteNews,
-        loading,
-        error,
-      }}
+      value={{ news, setNews, addNews, updateNews, deleteNews, loading, error }}
     >
       {children}
     </NewsContext.Provider>
