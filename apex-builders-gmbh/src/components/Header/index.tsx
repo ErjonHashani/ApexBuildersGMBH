@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 
+
 export default function Header() {
   const { data: session, status } = useSession();
   const router = useRouter();
