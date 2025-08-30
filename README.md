@@ -6,7 +6,7 @@ Welcome to **ApexBuildersGMBH** – a modern client-side web development project
 
 ## 🏗️ About
 
-ApexBuildersGMBH is dedicated to building robust, scalable, and visually appealing web applications. Our focus is on delivering high-quality user experiences using the latest web technologies.
+ApexBuildersGMBH is committed to delivering high-quality construction projects that are durable, efficient, and aesthetically pleasing. We specialize in turning architectural visions into reality, combining expert craftsmanship with modern building techniques to ensure lasting value for our clients.
 
 ---
 
